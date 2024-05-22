@@ -56,7 +56,7 @@ class DownloadBar:
         self._percent = percent
 
 
-    def download(self, url: str, dest: str|Path, title: str, chunk_size: int=4096) -> None:
+    def download(self, url: str, dest: str|Path, title: str, response:requests.Response = None, chunk_size: int=4096) -> None:
         """
         The task of this function is to download the desired file from
         the specified url and save it in the destination path.
@@ -70,8 +70,11 @@ class DownloadBar:
 
         with open(dest, 'wb') as output_file:
             sys.stdout.write(title + "\n")
+            
+            if response is None:
+                response =  requests.get(url, stream=True)
+          
 
-            response: requests.Response = requests.get(url, stream=True)
             total_length = response.headers.get('content-length')
 
             if total_length is None:
